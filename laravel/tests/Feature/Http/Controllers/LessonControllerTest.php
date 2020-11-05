@@ -36,11 +36,12 @@ class LessonControllerTest extends TestCase
         // $user = factory(User::class)->create();
         // factory(UserProfile::class)->create(['user_id' => $user->id]);
         $user = $this->createUser();
+        $this->actingAs($user);
         $response = $this->get("/lessons/{$lesson->id}");
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertSee($lesson->name);
-        // $response->assertSee("空き状況: {$expectedVacancyLevelMark}");
+        $response->assertSee("空き状況: {$expectedVacancyLevelMark}");
     }
     
     public function dataShow()
