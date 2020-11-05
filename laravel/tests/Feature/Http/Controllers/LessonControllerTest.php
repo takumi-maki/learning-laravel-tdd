@@ -5,14 +5,17 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Lesson;
 use App\Models\Reservation;
 use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
+use Tests\Factories\Traits\CreatesUser;
 use Tests\TestCase;
 use Log;
 
 class LessonControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use CreatesUser;
     /**
      * @param int $capacity
      * @param int $reservationCount
@@ -26,8 +29,13 @@ class LessonControllerTest extends TestCase
         
         for ($i = 0; $i < $reservationCount; $i++) {
             $user = factory(User::class)->create();
+            factory(UserProfile::class)->create(['user_id' => $user->id]);
             factory(Reservation::class)->create(['lesson_id' => $lesson->id, 'user_id' => $user->id]);
         }
+
+        // $user = factory(User::class)->create();
+        // factory(UserProfile::class)->create(['user_id' => $user->id]);
+        $user = $this->createUser();
         $response = $this->get("/lessons/{$lesson->id}");
 
         $response->assertStatus(Response::HTTP_OK);
